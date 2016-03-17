@@ -149,6 +149,7 @@ In order to submit programming assignments in this class, you will need to both 
 Before you submit your assignment, double-check the following:
 
 * Test that your app builds, installs, and works without errors. It should fulfill all the user stories.
+* Take two (2) **screenshots** of your app running: one before a search and one after. Put them in the included `screenshots` folder.
 * Fill out the `SUBMISSION.md`included in the assignment directory, answering the questions.
 * Commit the final version of your work, and push your code to your GitHub repository.
 
