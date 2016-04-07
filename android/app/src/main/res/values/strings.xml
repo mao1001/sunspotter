@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Sun Spotter</string>
+
+    <string name="search_btn_lbl">Search</string>
+    <string name="search_hint">Enter City or Zip code</string>
+    
+    <string name="status_sun">There will be sun!</string>
+    <string name="status_no_sun">No sun today =(</string>
+
+    <string name="placeholder">Placerholder Text Replace Me!</string>
 </resources>
