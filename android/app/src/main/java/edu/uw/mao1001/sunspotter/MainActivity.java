@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 .appendQueryParameter("format", "JSON")
                 .appendQueryParameter("appid", BuildConfig.OPEN_WEATHER_MAP_API_KEY);
 
-        http://api.openweathermap.org/data/2.5/forecast?q=Seattle&format=json&appid=52999c99f1a294b470e1e57f2602a5e1
+        //http://api.openweathermap.org/data/2.5/forecast?q=Seattle&format=json&appid=52999c99f1a294b470e1e57f2602a5e1
 
         return builder.build().toString();
     }
@@ -97,13 +97,14 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 String results = buffer.toString();
-                results = results.replace("{\"Search\":[","");
-                results = results.replace("]}","");
-                results = results.replace("},", "},\n");
+//                results = results.replace("{\"Search\":[","");
+//                results = results.replace("]}","");
+//                results = results.replace("},", "},\n");
 
                 Log.v(TAG, results); //for debugging purposes
 
                 forecasts = results.split("\n");
+                Log.v(TAG, forecasts.toString());
             }
             catch (IOException e) {
                 return null;
