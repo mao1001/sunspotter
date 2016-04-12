@@ -11,12 +11,18 @@ import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 .appendPath("forecast")
                 .appendQueryParameter("q", city)
                 .appendQueryParameter("format", "JSON")
+                .appendQueryParameter("units", "imperial")
                 .appendQueryParameter("appid", BuildConfig.OPEN_WEATHER_MAP_API_KEY);
 
         //http://api.openweathermap.org/data/2.5/forecast?q=Seattle&format=json&appid=52999c99f1a294b470e1e57f2602a5e1
@@ -61,18 +68,17 @@ public class MainActivity extends AppCompatActivity {
         return builder.build().toString();
     }
 
-    private class Search extends AsyncTask<String, Void, String> {
+    private class Search extends AsyncTask<String, Void, ArrayList<Forecast>> {
 
 
         @Override
-        protected String doInBackground(String...params) {
+        protected ArrayList<Forecast> doInBackground(String...params) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            String forecasts[] = null;
+            ArrayList<Forecast> forecasts = null;
 
             try {
-
                 URL url = new URL(buildURI(params[0]));
 
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -97,14 +103,16 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 String results = buffer.toString();
-//                results = results.replace("{\"Search\":[","");
-//                results = results.replace("]}","");
-//                results = results.replace("},", "},\n");
 
-                Log.v(TAG, results); //for debugging purposes
+                //Log.v(TAG, results); //for debugging purposes
 
-                forecasts = results.split("\n");
-                Log.v(TAG, forecasts.toString());
+                try {
+                    JSONObject jsonObject = new JSONObject(results);
+                    //Log.i(TAG, jsonObject.toString());
+                    forecasts = formatJSON(jsonObject);
+                } catch(JSONException e) {
+                    Log.e(TAG, e.toString());
+                }
             }
             catch (IOException e) {
                 return null;
@@ -120,6 +128,27 @@ public class MainActivity extends AppCompatActivity {
                     catch (IOException e) {
                     }
                 }
+            }
+
+            return forecasts;
+        }
+
+        private ArrayList<Forecast> formatJSON(JSONObject jsonObject) {
+            ArrayList<Forecast> forecasts = new ArrayList<>();
+            try {
+                JSONArray list = jsonObject.getJSONArray("list");
+                for (int i = 0; i < list.length(); i++) {
+                    JSONObject item = list.getJSONObject(i);
+                    JSONObject main = item.getJSONObject("main");
+                    JSONObject weather = item.getJSONArray("weather").getJSONObject(0);
+                    Forecast forecast = new Forecast(item.getString("dt"), weather.getString("description"), main.getDouble("temp"));
+                    forecasts.add(forecast);
+                }
+
+                return forecasts;
+
+            } catch (JSONException e) {
+                Log.e(TAG, e.toString());
             }
 
             return null;
