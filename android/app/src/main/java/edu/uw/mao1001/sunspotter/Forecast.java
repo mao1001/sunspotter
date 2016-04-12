@@ -31,4 +31,8 @@ public class Forecast {
     public Double getTemperature() {
         return temperature;
     }
+
+    public String toString() {
+        return date.toString();
+    }
 }

@@ -10,17 +10,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.uw.mao1001.sunspotter.MainActivity">
 
-    <include layout="@layout/search_bundle" />
+    <include layout="@layout/search_bundle"
+        android:id="@+id/searchBundle"/>
 
-    <ViewStub
-        android:id="@+id/middleStub"
-        android:inflatedId="@+id/sunStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <include layout="@layout/sun_status"/>
 
-    <ViewStub
-        android:id="@+id/bottomStub"
-        android:inflatedId="@+id/searchResults"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <include layout="@layout/search_results"/>
+
+    <!--<ViewStub-->
+        <!--android:id="@+id/middleStub"-->
+        <!--android:inflatedId="@+id/sunStatusStub"-->
+        <!--android:layout="@layout/sun_status"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/searchBundle"/>-->
+
+    <!--<ViewStub-->
+        <!--android:id="@+id/bottomStub"-->
+        <!--android:inflatedId="@+id/searchResultsStub"-->
+        <!--android:layout="@layout/search_results"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/middleStub"/>-->
 </LinearLayout>

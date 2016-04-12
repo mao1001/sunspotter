@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewStub;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
+    private ArrayAdapter<Forecast> adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,19 +40,31 @@ public class MainActivity extends AppCompatActivity {
 
         instantiateSearchButton();
 
+        adapter = new ArrayAdapter<Forecast>(this, R.layout.search_results, R.id.resultItem, new ArrayList<Forecast>());
+        ListView listview = (ListView)findViewById(R.id.searchResults);
+        if (listview != null) {
+            listview.setAdapter(adapter);
+        } else {
+            Log.i(TAG, "Listview is null");
+        }
+
     }
 
     private void instantiateSearchButton() {
         Button searchBtn = (Button)findViewById(R.id.searchButton);
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText searchBar = (EditText)findViewById(R.id.searchBar);
-                String uri = buildURI(searchBar.getText().toString());
-                Log.i(TAG, uri);
-                new Search().execute(uri);
-            }
-        });
+        if (searchBtn != null) {
+            searchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    EditText searchBar = (EditText)findViewById(R.id.searchBar);
+                    if (searchBar != null) {
+                        String uri = buildURI(searchBar.getText().toString());
+                        Log.i(TAG, uri);
+                        new Search().execute(uri);
+                    }
+                }
+            });
+        }
     }
 
     private String buildURI(String city) {
@@ -70,88 +86,40 @@ public class MainActivity extends AppCompatActivity {
 
     private class Search extends AsyncTask<String, Void, ArrayList<Forecast>> {
 
-
         @Override
         protected ArrayList<Forecast> doInBackground(String...params) {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
+            Log.i(TAG, "Entering doInBackground");
 
-            ArrayList<Forecast> forecasts = null;
+            ArrayList<Forecast> results = ForecastDownloader.downloadForecastData(params[0]);
 
-            try {
-                URL url = new URL(buildURI(params[0]));
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line = reader.readLine();
-                while (line != null) {
-                    buffer.append(line + "\n");
-                    line = reader.readLine();
-                }
-
-                if (buffer.length() == 0) {
-                    return null;
-                }
-
-                String results = buffer.toString();
-
-                //Log.v(TAG, results); //for debugging purposes
-
-                try {
-                    JSONObject jsonObject = new JSONObject(results);
-                    //Log.i(TAG, jsonObject.toString());
-                    forecasts = formatJSON(jsonObject);
-                } catch(JSONException e) {
-                    Log.e(TAG, e.toString());
-                }
-            }
-            catch (IOException e) {
-                return null;
-            }
-            finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    }
-                    catch (IOException e) {
-                    }
-                }
-            }
-
-            return forecasts;
+            Log.i(TAG, results.toString());
+            return results;
         }
 
-        private ArrayList<Forecast> formatJSON(JSONObject jsonObject) {
-            ArrayList<Forecast> forecasts = new ArrayList<>();
-            try {
-                JSONArray list = jsonObject.getJSONArray("list");
-                for (int i = 0; i < list.length(); i++) {
-                    JSONObject item = list.getJSONObject(i);
-                    JSONObject main = item.getJSONObject("main");
-                    JSONObject weather = item.getJSONArray("weather").getJSONObject(0);
-                    Forecast forecast = new Forecast(item.getString("dt"), weather.getString("description"), main.getDouble("temp"));
-                    forecasts.add(forecast);
-                }
+        @Override
+        protected void onPostExecute(ArrayList<Forecast> forecasts) {
+            super.onPostExecute(forecasts);
+            Log.i(TAG, "Entering onPostExecute");
 
-                return forecasts;
+            //ViewStub middleStub = (ViewStub)findViewById(R.id.middleStub);
+            //ViewStub bottomStub = (ViewStub)findViewById(R.id.bottomStub);
 
-            } catch (JSONException e) {
-                Log.e(TAG, e.toString());
+
+//            if (middleStub != null) {
+//                middleStub.inflate();
+//            }
+
+//            if (bottomStub != null) {
+//                bottomStub.inflate();
+//            }
+
+
+            adapter.clear();
+            for (Forecast item : forecasts) {
+                Log.i(TAG, "Adding: " + item);
+                adapter.add(item);
             }
 
-            return null;
         }
     }
 }
