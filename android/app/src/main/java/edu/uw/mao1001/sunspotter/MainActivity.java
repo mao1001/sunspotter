@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    private ArrayAdapter<Forecast> adapter;
+    private ArrayAdapter<String> adapter;
 
 
     @Override
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         instantiateSearchButton();
 
-        adapter = new ArrayAdapter<Forecast>(this, R.layout.search_results, R.id.resultItem, new ArrayList<Forecast>());
+        adapter = new ArrayAdapter<String>(this, R.layout.search_result_item, new ArrayList<String>());
         ListView listview = (ListView)findViewById(R.id.searchResults);
         if (listview != null) {
             listview.setAdapter(adapter);
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             adapter.clear();
             for (Forecast item : forecasts) {
                 Log.i(TAG, "Adding: " + item);
-                adapter.add(item);
+                adapter.add(item.getSunStatus());
             }
 
         }
