@@ -5,28 +5,13 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,12 +32,12 @@ public class MainActivity extends AppCompatActivity {
         instantiateSearchButton();
 
         //Creates a new ArrayAdapter to the result list view.
-        adapter = new ArrayAdapter<String>(this, R.layout.search_result_item, new ArrayList<String>());
+        adapter = new ArrayAdapter<>(this, R.layout.search_result_item, new ArrayList<String>());
         ListView listview = (ListView)findViewById(R.id.searchResults);
         if (listview != null) {
             listview.setAdapter(adapter);
         } else {
-            Log.e(TAG, "Listview is null");
+            Log.e(TAG, "ListView is null");
         }
     }
 
@@ -72,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
                     EditText searchBar = (EditText)findViewById(R.id.searchBar);
                     if (searchBar != null) {
                         String uri = buildURI(searchBar.getText().toString());
-                        Log.i(TAG, uri);
                         new Search().execute(uri);
                     }
                 }
@@ -99,7 +83,9 @@ public class MainActivity extends AppCompatActivity {
                 .appendQueryParameter("units", "imperial")
                 .appendQueryParameter("appid", BuildConfig.OPEN_WEATHER_MAP_API_KEY);
 
-        return builder.build().toString();
+        String uri = builder.build().toString();
+        //Log.i(TAG, uri);
+        return uri;
     }
 
     /**
@@ -108,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
      * @ param ArrayList<Forecast> forecasts: List of forecasts to be displayed.
      */
     private void displayResults(ArrayList<Forecast> forecasts) {
-        Log.i(TAG, "Entering onPostExecute");
-
         //ViewStub bottomStub = (ViewStub)findViewById(R.id.bottomStub);
         //ViewStub middleStub = (ViewStub)findViewById(R.id.middleStub);
 
@@ -131,11 +115,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (firstSun != null) {
             sunStatusTxtView.setText(R.string.status_sun);
-            sunStatusDetail.setText("Sun on " + firstSun.getDate().toString());
+            sunStatusDetail.setText("on " + firstSun.getDate().toString());
             sunVisual.setImageResource(R.drawable.sun_icon2);
         } else {
             sunStatusTxtView.setText(R.string.status_no_sun);
-            sunStatusDetail.setText("There will be no sun for a while.");
+            sunStatusDetail.setText("Not for a while anyway =(");
             sunVisual.setImageResource(R.drawable.cloud_icon2);
         }
 
@@ -179,12 +163,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<Forecast> doInBackground(String...params) {
-            Log.i(TAG, "Entering doInBackground");
-
             //Downloads data.
-            ArrayList<Forecast> results = ForecastDownloader.downloadForecastData(params[0]);
-
-            return results;
+            return ForecastDownloader.downloadForecastData(params[0]);
         }
 
         @Override

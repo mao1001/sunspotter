@@ -19,6 +19,10 @@ import java.util.ArrayList;
 public class ForecastDownloader {
     private static final String TAG = "ForecastDownloader";
 
+    //---------------------------------//
+    //   P U B L I C   M E T H O D S   //
+    //---------------------------------//
+
     /**
      * Repurposed method from movieDownloader to download forecast data
      * from a different API. It will also parse the response
@@ -87,6 +91,10 @@ public class ForecastDownloader {
 
         return forecasts;
     }
+
+    //-----------------------------------//
+    //   P R I V A T E   M E T H O D S   //
+    //-----------------------------------//
 
     /**
      * Parses the passed in JSONObject to take the form of

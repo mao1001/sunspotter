@@ -13,6 +13,10 @@ public class Forecast {
     private Date date;
     private boolean sunStatus;
 
+    //-----------------------------//
+    //   C O N S T R U C T O R S   //
+    //-----------------------------//
+
     /**
      * Constructor to build an object representing a single forecast.
      * @param rawDate : Date in unix UTC form.
@@ -27,6 +31,9 @@ public class Forecast {
         this.sunStatus = (sunStatus.equals("clear") || sunStatus.equals("few clouds"));
     }
 
+    //-----------------------------------//
+    //   G E T T E R S / S E T T E R S   //
+    //-----------------------------------//
 
     /**
      * Gets the sun status for this forecast.
@@ -46,11 +53,12 @@ public class Forecast {
         return new SimpleDateFormat("EEE, MMM d, h:mma, z").format(this.date);
     }
 
+    /**
+     * Gets the temperature for this forecast.
+     * 'Wed, Apr 13, 2:00AM, PDT'
+     * @return Double: Temperature
+     */
     public Double getTemperature() {
         return temperature;
-    }
-
-    public String toString() {
-        return sunStatus + " on " + date.toString();
     }
 }

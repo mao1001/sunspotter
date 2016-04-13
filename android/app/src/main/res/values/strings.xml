@@ -5,7 +5,7 @@
     <string name="search_hint">Enter City</string>
     
     <string name="status_sun">There will be sun!</string>
-    <string name="status_no_sun">No sun today =(</string>
+    <string name="status_no_sun">No sun</string>
 
     <string name="placeholder">Placeholder Text!</string>
 
