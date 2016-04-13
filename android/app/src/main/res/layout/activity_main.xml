@@ -9,21 +9,13 @@
     <include layout="@layout/search_bundle"
         android:id="@+id/searchBundle"/>
 
-    <include layout="@layout/sun_status"/>
+    <ViewStub
+        android:id="@+id/middleStub"
+        android:inflatedId="@+id/sunStatusStub"
+        android:layout="@layout/sun_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <include layout="@layout/search_results"/>
 
-    <!--<ViewStub-->
-        <!--android:id="@+id/middleStub"-->
-        <!--android:inflatedId="@+id/sunStatusStub"-->
-        <!--android:layout="@layout/sun_status"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"/>-->
-
-    <!--<ViewStub-->
-        <!--android:id="@+id/bottomStub"-->
-        <!--android:inflatedId="@+id/searchResultsStub"-->
-        <!--android:layout="@layout/search_results"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"/>-->
 </LinearLayout>

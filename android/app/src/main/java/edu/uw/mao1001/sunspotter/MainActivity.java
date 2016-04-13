@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -83,9 +84,8 @@ public class MainActivity extends AppCompatActivity {
                 .appendQueryParameter("units", "imperial")
                 .appendQueryParameter("appid", BuildConfig.OPEN_WEATHER_MAP_API_KEY);
 
-        String uri = builder.build().toString();
-        //Log.i(TAG, uri);
-        return uri;
+        //Log.i(TAG, builder.build().toString());
+        return builder.build().toString();
     }
 
     /**
@@ -94,12 +94,14 @@ public class MainActivity extends AppCompatActivity {
      * @ param ArrayList<Forecast> forecasts: List of forecasts to be displayed.
      */
     private void displayResults(ArrayList<Forecast> forecasts) {
-        //ViewStub bottomStub = (ViewStub)findViewById(R.id.bottomStub);
-        //ViewStub middleStub = (ViewStub)findViewById(R.id.middleStub);
+        ViewStub middleStub = (ViewStub)findViewById(R.id.middleStub);
 
-        //if (bottomStub != null && middleStub != null) {
-        //bottomStub.inflate();
-        // middleStub.inflate();
+        if (middleStub != null) {
+            middleStub.inflate();
+        } else {
+                Log.e(TAG, "'middleStub' wasn't initialized properly. Check identifiers.");
+        }
+
         adapter.clear();
         Forecast firstSun = null;
         for (Forecast item : forecasts) {
@@ -122,11 +124,6 @@ public class MainActivity extends AppCompatActivity {
             sunStatusDetail.setText("Not for a while anyway =(");
             sunVisual.setImageResource(R.drawable.cloud_icon2);
         }
-
-
-//            } else {
-//                Log.e(TAG, "Either 'bottomStub' or 'middleStub' weren't initialized properly. Check identifiers.");
-//            }
     }
 
     /**
