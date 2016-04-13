@@ -4,10 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="edu.uw.mao1001.sunspotter.MainActivity">
 
     <include layout="@layout/search_bundle"
@@ -22,14 +18,12 @@
         <!--android:inflatedId="@+id/sunStatusStub"-->
         <!--android:layout="@layout/sun_status"-->
         <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@id/searchBundle"/>-->
+        <!--android:layout_height="wrap_content"/>-->
 
     <!--<ViewStub-->
         <!--android:id="@+id/bottomStub"-->
         <!--android:inflatedId="@+id/searchResultsStub"-->
         <!--android:layout="@layout/search_results"-->
         <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@id/middleStub"/>-->
+        <!--android:layout_height="wrap_content"/>-->
 </LinearLayout>

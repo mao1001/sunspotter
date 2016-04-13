@@ -11,11 +11,14 @@ import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -101,25 +104,41 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(forecasts);
             Log.i(TAG, "Entering onPostExecute");
 
-            //ViewStub middleStub = (ViewStub)findViewById(R.id.middleStub);
             //ViewStub bottomStub = (ViewStub)findViewById(R.id.bottomStub);
+            //ViewStub middleStub = (ViewStub)findViewById(R.id.middleStub);
 
-
-//            if (middleStub != null) {
-//                middleStub.inflate();
-//            }
-
-//            if (bottomStub != null) {
-//                bottomStub.inflate();
-//            }
-
-
+            //if (bottomStub != null && middleStub != null) {
+                //bottomStub.inflate();
+               // middleStub.inflate();
             adapter.clear();
+            Forecast firstSun = null;
             for (Forecast item : forecasts) {
                 Log.i(TAG, "Adding: " + item);
-                adapter.add(item.getSunStatus());
+                String sunStatus = item.getSunStatus();
+                adapter.add(item.toString());
+                if (sunStatus.equals("Sun") && firstSun == null) {
+                    firstSun = item;
+                }
             }
 
+            TextView sunStatusTxtView = (TextView)findViewById(R.id.sun_status_message);
+            TextView sunStatusDetail = (TextView)findViewById(R.id.sun_status_detail);
+            ImageView sunVisual = (ImageView)findViewById(R.id.sun_visual);
+
+            if (firstSun != null) {
+                sunStatusTxtView.setText(R.string.status_sun);
+                sunStatusDetail.setText("Sun on " + firstSun.getDate().toString());
+                sunVisual.setImageResource(R.drawable.sun_icon2);
+            } else {
+                sunStatusTxtView.setText(R.string.status_no_sun);
+                sunStatusDetail.setText("There will be no sun for a while.");
+                sunVisual.setImageResource(R.drawable.cloud_icon2);
+            }
+
+
+//            } else {
+//                Log.e(TAG, "Either 'bottomStub' or 'middleStub' weren't initialized properly. Check identifiers.");
+//            }
         }
     }
 }
