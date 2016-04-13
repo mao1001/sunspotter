@@ -19,6 +19,13 @@ import java.util.ArrayList;
 public class ForecastDownloader {
     private static final String TAG = "ForecastDownloader";
 
+    /**
+     * Repurposed method from movieDownloader to download forecast data
+     * from a different API. It will also parse the response
+     * into a JSON object and return an ArrayList of the forecasts.
+     * @param String URI: URI to be used to open a connection to.
+     * @return ArrayList<Forecast>: List of the returned data already parsed.
+     */
     public static ArrayList<Forecast> downloadForecastData(String URI) {
         Log.i(TAG, "Entering downloadForecastData");
 
@@ -54,8 +61,6 @@ public class ForecastDownloader {
 
             String results = buffer.toString();
 
-            //Log.v(TAG, results); //for debugging purposes
-
             try {
                 JSONObject jsonObject = new JSONObject(results);
                 Log.i(TAG, jsonObject.toString());
@@ -83,6 +88,12 @@ public class ForecastDownloader {
         return forecasts;
     }
 
+    /**
+     * Parses the passed in JSONObject to take the form of
+     * the 'Forecast' object. Returns an array of them.
+     * @param JSONObject jsonObject: The object to be parsed
+     * @return ArrayList<Forecast>: List of parsed data.
+     */
     private static ArrayList<Forecast> formatJSON(JSONObject jsonObject) {
         ArrayList<Forecast> forecasts = new ArrayList<>();
         try {

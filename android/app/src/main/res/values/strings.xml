@@ -8,4 +8,8 @@
     <string name="status_no_sun">No sun today =(</string>
 
     <string name="placeholder">Placeholder Text!</string>
+
+    <string name="temperature_lead_message">Temp:</string>
+    <string name="sun_message">Sun on</string>
+    <string name="no_sun_message">No sun on</string>
 </resources>

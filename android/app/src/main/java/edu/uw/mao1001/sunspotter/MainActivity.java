@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayAdapter<String> adapter;
 
+    //-----------------------//
+    //   O V E R R I D E S   //
+    //-----------------------//
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,16 +46,23 @@ public class MainActivity extends AppCompatActivity {
 
         instantiateSearchButton();
 
+        //Creates a new ArrayAdapter to the result list view.
         adapter = new ArrayAdapter<String>(this, R.layout.search_result_item, new ArrayList<String>());
         ListView listview = (ListView)findViewById(R.id.searchResults);
         if (listview != null) {
             listview.setAdapter(adapter);
         } else {
-            Log.i(TAG, "Listview is null");
+            Log.e(TAG, "Listview is null");
         }
-
     }
 
+    //-----------------------------------//
+    //   P R I V A T E   H E L P E R S   //
+    //-----------------------------------//
+
+    /**
+     * Instantiates the search button by attaching a click listener to it.
+     */
     private void instantiateSearchButton() {
         Button searchBtn = (Button)findViewById(R.id.searchButton);
         if (searchBtn != null) {
@@ -70,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Builds a URI based on the passed in city name. The data is returned in
+     * a JSON format with imperial units where applicable.
+     * @ params String city: City to be included as a query with the URI
+     *
+     * @ return String: The built URI.
+     */
     private String buildURI(String city) {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
@@ -82,63 +99,98 @@ public class MainActivity extends AppCompatActivity {
                 .appendQueryParameter("units", "imperial")
                 .appendQueryParameter("appid", BuildConfig.OPEN_WEATHER_MAP_API_KEY);
 
-        //http://api.openweathermap.org/data/2.5/forecast?q=Seattle&format=json&appid=52999c99f1a294b470e1e57f2602a5e1
-
         return builder.build().toString();
     }
 
+    /**
+     * Displays data to the user with the passed list of forecasts.
+     *
+     * @ param ArrayList<Forecast> forecasts: List of forecasts to be displayed.
+     */
+    private void displayResults(ArrayList<Forecast> forecasts) {
+        Log.i(TAG, "Entering onPostExecute");
+
+        //ViewStub bottomStub = (ViewStub)findViewById(R.id.bottomStub);
+        //ViewStub middleStub = (ViewStub)findViewById(R.id.middleStub);
+
+        //if (bottomStub != null && middleStub != null) {
+        //bottomStub.inflate();
+        // middleStub.inflate();
+        adapter.clear();
+        Forecast firstSun = null;
+        for (Forecast item : forecasts) {
+            adapter.add(parseData(item));
+            if (item.getSunStatus() && firstSun == null) {
+                firstSun = item;
+            }
+        }
+
+        TextView sunStatusTxtView = (TextView)findViewById(R.id.sun_status_message);
+        TextView sunStatusDetail = (TextView)findViewById(R.id.sun_status_detail);
+        ImageView sunVisual = (ImageView)findViewById(R.id.sun_visual);
+
+        if (firstSun != null) {
+            sunStatusTxtView.setText(R.string.status_sun);
+            sunStatusDetail.setText("Sun on " + firstSun.getDate().toString());
+            sunVisual.setImageResource(R.drawable.sun_icon2);
+        } else {
+            sunStatusTxtView.setText(R.string.status_no_sun);
+            sunStatusDetail.setText("There will be no sun for a while.");
+            sunVisual.setImageResource(R.drawable.cloud_icon2);
+        }
+
+
+//            } else {
+//                Log.e(TAG, "Either 'bottomStub' or 'middleStub' weren't initialized properly. Check identifiers.");
+//            }
+    }
+
+    /**
+     * Takes a forecast and parses out a string representation of that data.
+     *
+     * @ param Forecast forecast: The forecast to be parsed
+     *
+     * @ return String: A string representation of the data.
+     */
+    private String parseData(Forecast forecast) {
+        String parsedString = "";
+
+        parsedString += getString(R.string.temperature_lead_message) + " " + forecast.getTemperature().intValue() + ". ";
+
+        if (forecast.getSunStatus()) {
+            parsedString += getString(R.string.sun_message);
+        } else {
+            parsedString += getString(R.string.no_sun_message);
+        }
+
+        parsedString += " " + forecast.getDate();
+        return parsedString;
+    }
+
+    //-------------------------------//
+    //   P R I V A T E   C L A S S   //
+    //----- -------------------------//
+
+    /**
+     * Private class that extends AsyncTask. Primary function is to find the forecast
+     * based on the passed in URI and download the data.
+     */
     private class Search extends AsyncTask<String, Void, ArrayList<Forecast>> {
 
         @Override
         protected ArrayList<Forecast> doInBackground(String...params) {
             Log.i(TAG, "Entering doInBackground");
 
+            //Downloads data.
             ArrayList<Forecast> results = ForecastDownloader.downloadForecastData(params[0]);
 
-            Log.i(TAG, results.toString());
             return results;
         }
 
         @Override
         protected void onPostExecute(ArrayList<Forecast> forecasts) {
             super.onPostExecute(forecasts);
-            Log.i(TAG, "Entering onPostExecute");
-
-            //ViewStub bottomStub = (ViewStub)findViewById(R.id.bottomStub);
-            //ViewStub middleStub = (ViewStub)findViewById(R.id.middleStub);
-
-            //if (bottomStub != null && middleStub != null) {
-                //bottomStub.inflate();
-               // middleStub.inflate();
-            adapter.clear();
-            Forecast firstSun = null;
-            for (Forecast item : forecasts) {
-                Log.i(TAG, "Adding: " + item);
-                String sunStatus = item.getSunStatus();
-                adapter.add(item.toString());
-                if (sunStatus.equals("Sun") && firstSun == null) {
-                    firstSun = item;
-                }
-            }
-
-            TextView sunStatusTxtView = (TextView)findViewById(R.id.sun_status_message);
-            TextView sunStatusDetail = (TextView)findViewById(R.id.sun_status_detail);
-            ImageView sunVisual = (ImageView)findViewById(R.id.sun_visual);
-
-            if (firstSun != null) {
-                sunStatusTxtView.setText(R.string.status_sun);
-                sunStatusDetail.setText("Sun on " + firstSun.getDate().toString());
-                sunVisual.setImageResource(R.drawable.sun_icon2);
-            } else {
-                sunStatusTxtView.setText(R.string.status_no_sun);
-                sunStatusDetail.setText("There will be no sun for a while.");
-                sunVisual.setImageResource(R.drawable.cloud_icon2);
-            }
-
-
-//            } else {
-//                Log.e(TAG, "Either 'bottomStub' or 'middleStub' weren't initialized properly. Check identifiers.");
-//            }
+            displayResults(forecasts);
         }
     }
 }

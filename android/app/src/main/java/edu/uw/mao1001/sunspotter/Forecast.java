@@ -1,5 +1,8 @@
 package edu.uw.mao1001.sunspotter;
 
+import android.content.Context;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -8,28 +11,39 @@ import java.util.Date;
 public class Forecast {
     private Double temperature;
     private Date date;
-    private String sunStatus;
+    private boolean sunStatus;
 
+    /**
+     * Constructor to build an object representing a single forecast.
+     * @param rawDate : Date in unix UTC form.
+     * @param sunStatus : Descriptor of the sun status
+     * @param temperature : Temperature at the time listed.
+     */
     public Forecast(String rawDate, String sunStatus, Double temperature) {
         long dateValue = Long.valueOf(rawDate) * 1000;
         Date date = new Date(dateValue);
         this.date = date;
-
         this.temperature = temperature;
-
-        if (sunStatus.equals("clear") || sunStatus.equals("few clouds")) {
-            this.sunStatus = "Sun";
-        } else {
-            this.sunStatus = "No sun";
-        }
+        this.sunStatus = (sunStatus.equals("clear") || sunStatus.equals("few clouds"));
     }
 
-    public String getSunStatus() {
+
+    /**
+     * Gets the sun status for this forecast.
+     * @return boolean: Representing the status of the sun for this forecast.
+     */
+    public boolean getSunStatus() {
         return sunStatus;
     }
 
-    public Date getDate() {
-        return date;
+    /**
+     * Takes the date and returns a meaningful string.
+     * Example:
+     * 'Wed, Apr 13, 2:00AM, PDT'
+     * @return String: Meaningful representation of the date.
+     */
+    public String getDate() {
+        return new SimpleDateFormat("EEE, MMM d, h:mma, z").format(this.date);
     }
 
     public Double getTemperature() {
@@ -37,6 +51,6 @@ public class Forecast {
     }
 
     public String toString() {
-        return sunStatus + " " + date.toString();
+        return sunStatus + " on " + date.toString();
     }
 }
